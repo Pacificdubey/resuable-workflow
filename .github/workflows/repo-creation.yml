@@ -6,6 +6,9 @@ on: [push]
 jobs:
   create-repo:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - name: JFrog Setup
       id: setup-cli
