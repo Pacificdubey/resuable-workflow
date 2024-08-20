@@ -20,19 +20,21 @@ jobs:
       with:
         oidc-provider-name: github
         oidc-audience: my-aud
-
     - name: Extract Branch Name
-      id: extract_branch
       run: |
         BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
-        # Set the environment variable with sanitized branch name
         echo "repository=$(echo $BRANCH_NAME | sed 's/\//_/g')" >> $GITHUB_ENV
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
-    - name: Debug Information
+    - name: Check and Create Repository
       run: |
-        echo "Branch Name: ${{ env.BRANCH_NAME }}"
-        echo "Sanitized Repository Name: ${{ env.repository }}"
-    - name: Feature Branch Repository Creation
-      run: |
-        jf rt rc template/local-repo-template.json --vars key1=${{ env.repository }}
+        REPO_NAME="${{ env.repository }}-repo"
+        echo "Checking if repository exists: $REPO_NAME"
+        RESPONSE=$(jfrog rt curl -X GET "/api/repositories/$REPO_NAME" || true)
+        
+        if echo "$RESPONSE" | grep -q "404"; then
+          echo "Repository does not exist, creating: $REPO_NAME"
+          jfrog rt rc templates/local-repo-template.json "$REPO_NAME"
+        else
+          echo "Repository $REPO_NAME already exists."
+        fi
