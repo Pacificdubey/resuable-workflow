@@ -23,21 +23,24 @@ jobs:
       id: extract_branch
       run: |
         BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
+        # Set the environment variable with sanitized branch name
+        echo "repository=$(echo $BRANCH_NAME | sed 's/\//_/g')" >> $GITHUB_ENV
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
     - name: Debug Information
       run: |
         echo "Branch Name: ${{ env.BRANCH_NAME }}"
+        echo "Sanitized Repository Name: ${{ env.repository }}"
 
     - name: Create Repository
       run: |
-        REPO_NAME="${{ env.BRANCH_NAME }}-repo"
+        REPO_NAME="${{ env.repository }}-repo"
         echo "Creating repository: $REPO_NAME"
         # Check if the repository already exists
         RESPONSE=$(jfrog rt curl -X GET /api/repositories/$REPO_NAME || true)
         if [ -z "$RESPONSE" ]; then
           # Create the repository if it does not exist
-          jfrog  rt rc --json='{"rclass": "local", "packageType": "maven", "repoLayoutRef": "maven-2-default"}' $REPO_NAME
+          jfrog rt rc --json='{"rclass": "local", "packageType": "maven", "repoLayoutRef": "maven-2-default"}' $REPO_NAME
         else
           echo "Repository $REPO_NAME already exists"
         fi
