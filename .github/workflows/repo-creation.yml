@@ -1,4 +1,4 @@
-name: Repository Creation
+name: Repository Creation Task
 
 on: [push]
   #workflow_call:
