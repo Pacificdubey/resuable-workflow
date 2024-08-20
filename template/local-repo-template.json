@@ -1,5 +1,5 @@
 {    
-  "key": "auto-cli-local-${key1}",
+  "key": "${REPO_NAME}",
   "packageType": "maven",
   "rclass": "local"
 }
