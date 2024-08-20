@@ -1,7 +1,6 @@
 name: Repository Creation
 
-on:
-  workflow_call:
+on: [ push ]
 
 jobs:
   create-repo:
