@@ -10,6 +10,8 @@ jobs:
       id-token: write
       contents: read
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
     - name: JFrog Setup
       id: setup-cli
       uses: jfrog/setup-jfrog-cli@v4.2.2
