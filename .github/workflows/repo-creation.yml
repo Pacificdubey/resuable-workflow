@@ -32,16 +32,39 @@ jobs:
         echo "Branch Name: ${{ env.BRANCH_NAME }}"
         echo "Sanitized Repository Name: ${{ env.repository }}"
 
+    - name: Check Repository Existence
+      id: check_repo
+      run: |
+        REPO_NAME="${{ env.repository }}-repo"
+        echo "Checking if repository exists: $REPO_NAME"
+        RESPONSE=$(jfrog rt curl -X GET "/api/repositories/$REPO_NAME" || true)
+        echo "Response: $RESPONSE"
+        if echo "$RESPONSE" | grep -q "404"; then
+          echo "Repository does not exist"
+          echo "CREATE_REPO=true" >> $GITHUB_ENV
+        else
+          echo "Repository exists"
+          echo "CREATE_REPO=false" >> $GITHUB_ENV
+        fi
+
     - name: Create Repository
+      if: env.CREATE_REPO == 'true'
       run: |
         REPO_NAME="${{ env.repository }}-repo"
         echo "Creating repository: $REPO_NAME"
-        # Debug: Check if the repository exists
-        RESPONSE=$(jfrog rt curl -X GET /api/repositories/$REPO_NAME || true)
+        # Define the repository configuration JSON
+        REPO_CONFIG=$(cat <<EOF
+           {
+             "rclass": "local",
+             "packageType": "maven",
+             "repoLayoutRef": "maven-2-default"
+           }
+          EOF
+          )
+        # Create the repository
+        RESPONSE=$(jfrog rt rc --json="$REPO_CONFIG" "$REPO_NAME" 2>&1)
         echo "Response: $RESPONSE"
-        if echo "$RESPONSE" | grep -q "404"; then
-          # Create the repository if it does not exist
-          jfrog rt rc --json='{"rclass": "local", "packageType": "maven", "repoLayoutRef": "maven-2-default"}' $REPO_NAME
-        else
-          echo "Repository $REPO_NAME already exists or an error occurred"
+        if echo "$RESPONSE" | grep -q "400"; then
+          echo "Failed to create repository: $REPO_NAME"
+          exit 1
         fi
