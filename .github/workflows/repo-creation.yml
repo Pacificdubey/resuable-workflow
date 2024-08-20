@@ -33,12 +33,4 @@ jobs:
         echo "Sanitized Repository Name: ${{ env.repository }}"
     - name: Feature Branch Repository Creation
       run: |
-        jf rt rc templates/local-repo-template.json --vars key1=${{ env.repository }}"
-
-
-
-
-
-          echo "Failed to create repository: $REPO_NAME"
-          exit 1
-        fi
+        jf rt rc templates/local-repo-template.json --vars key1=${{ env.repository }}
