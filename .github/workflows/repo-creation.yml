@@ -41,9 +41,15 @@ jobs:
         fi
         echo "REPO_PREFIX=$PREFIX" >> $GITHUB_ENV
 
+    - name: Debug Information
+      run: |
+        echo "Branch Name: ${{ env.BRANCH_NAME }}"
+        echo "Repo Prefix: ${{ env.REPO_PREFIX }}"
+
     - name: Create Repository
       run: |
         REPO_NAME="${{ env.REPO_PREFIX }}${{ env.BRANCH_NAME }}-repo"
+        echo "Creating repository: $REPO_NAME"
         # Check if the repository already exists
         RESPONSE=$(jfrog rt curl -X GET /api/repositories/$REPO_NAME || true)
         if [ -z "$RESPONSE" ]; then
