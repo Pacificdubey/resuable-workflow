@@ -31,40 +31,14 @@ jobs:
       run: |
         echo "Branch Name: ${{ env.BRANCH_NAME }}"
         echo "Sanitized Repository Name: ${{ env.repository }}"
-
-    - name: Check Repository Existence
-      id: check_repo
+    - name: Feature Branch Repository Creation
       run: |
-        REPO_NAME="${{ env.repository }}-repo"
-        echo "Checking if repository exists: $REPO_NAME"
-        RESPONSE=$(jfrog rt curl -X GET "/api/repositories/$REPO_NAME" || true)
-        echo "Response: $RESPONSE"
-        if echo "$RESPONSE" | grep -q "404"; then
-          echo "Repository does not exist"
-          echo "CREATE_REPO=true" >> $GITHUB_ENV
-        else
-          echo "Repository exists"
-          echo "CREATE_REPO=false" >> $GITHUB_ENV
-        fi
+        jf rt rc templates/local-repo-template.json --vars key1=${{ env.repository }}"
 
-    - name: Create Repository
-      if: env.CREATE_REPO == 'true'
-      run: |
-        REPO_NAME="${{ env.repository }}-repo"
-        echo "Creating repository: $REPO_NAME"
-        # Define the repository configuration JSON
-        REPO_CONFIG=$(cat <<EOF
-           {
-             "rclass": "local",
-             "packageType": "maven",
-             "repoLayoutRef": "maven-2-default"
-           }
-          EOF
-          )
-        # Create the repository
-        RESPONSE=$(jfrog rt rc --json="$REPO_CONFIG" "$REPO_NAME" 2>&1)
-        echo "Response: $RESPONSE"
-        if echo "$RESPONSE" | grep -q "400"; then
+
+
+
+
           echo "Failed to create repository: $REPO_NAME"
           exit 1
         fi
