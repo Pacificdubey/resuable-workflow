@@ -29,4 +29,4 @@ jobs:
     - name: Check and Create Repository
       run: |
         REPO_NAME="${{ env.repository }}-repo"
-        jfrog rt rc template/local-repo-template.json --vars repo1=$REPO_NAME
+        jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
