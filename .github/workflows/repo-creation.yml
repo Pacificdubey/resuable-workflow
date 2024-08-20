@@ -29,12 +29,4 @@ jobs:
     - name: Check and Create Repository
       run: |
         REPO_NAME="${{ env.repository }}-repo"
-        echo "Checking if repository exists: $REPO_NAME"
-        RESPONSE=$(jfrog rt curl -X GET "/api/repositories/$REPO_NAME" || true)
-        
-        if echo "$RESPONSE" | grep -q "404"; then
-          echo "Repository does not exist, creating: $REPO_NAME"
-          jfrog rt rc templates/local-repo-template.json "$REPO_NAME"
-        else
-          echo "Repository $REPO_NAME already exists."
-        fi
+        jfrog rt rc template/local-repo-template.json --vars repo1=$REPO_NAME
