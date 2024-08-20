@@ -37,7 +37,7 @@ jobs:
         RESPONSE=$(jfrog rt curl -X GET /api/repositories/$REPO_NAME || true)
         if [ -z "$RESPONSE" ]; then
           # Create the repository if it does not exist
-          jfrog rt repo-create --json='{"rclass": "local", "packageType": "maven", "repoLayoutRef": "maven-2-default"}' $REPO_NAME
+          jfrog  repo-create --json='{"rclass": "local", "packageType": "maven", "repoLayoutRef": "maven-2-default"}' $REPO_NAME
         else
           echo "Repository $REPO_NAME already exists"
         fi
