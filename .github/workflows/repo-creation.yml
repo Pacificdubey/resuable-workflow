@@ -29,6 +29,9 @@ jobs:
     - name: Check and Create Repository
       run: |
         REPO_NAME="${{ env.repository }}-repo"
-        jfrog rt curl -X GET "/api/repositories/maventest-libs-release"
+        if jfrog rt curl -X GET "/api/repositories/$REPO_NAME" --silent; then
+          echo "Repository exists, no need to create."
+        else
+          echo "Repository does not exist,"
         # jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         
