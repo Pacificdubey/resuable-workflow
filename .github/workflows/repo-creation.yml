@@ -29,7 +29,7 @@ jobs:
     - name: Check and Create Repository
       run: |
         REPO_NAME="${{ env.repository }}-repo"
-        STATUS_CODE=$(jfrog rt curl -X GET "/api/$REPO_NAME" -I --silent | head -n 1 | awk '{print $2}')
+        STATUS_CODE=$(jfrog rt curl -X GET "/api/feature_repotesting-repo" -I --silent | head -n 1 | awk '{print $2}')
         echo $STATUS_CODE
         # jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         
