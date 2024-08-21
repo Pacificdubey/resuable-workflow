@@ -31,8 +31,7 @@ jobs:
         REPO_NAME=${{ env.repository }}-repo
         API_URL="/api/repositories/${REPO_NAME}"
         # Fetch the repository and capture the HTTP status code
-        RESPONSE=$(jfrog rt curl -X GET "$API_URL" -I --silent || true)
-        STATUS_CODE=$(echo "$RESPONSE" | head -n 1 | awk '{print $2}')
-        echo $STATUS_CODE
+        RESPONSE=$(jfrog rt curl -X GET "/artifactory/api/repositories/$REPO_NAME" || true)
+        echo $RESPONSE
         # jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         
