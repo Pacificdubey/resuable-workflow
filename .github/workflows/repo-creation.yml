@@ -33,5 +33,10 @@ jobs:
         # Fetch the repository and capture the HTTP status code
         RESPONSE=$(jfrog rt curl -X GET "/api/repositories/${REPO_NAME}" || true)
         echo $RESPONSE
+        if echo "$RESPONSE" | grep -q '"key"'; then
+            echo "Repository exists: $REPO_NAME"
+          else
+            echo "Repository does not exist
+        fi
         # jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         
