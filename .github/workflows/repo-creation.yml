@@ -31,7 +31,7 @@ jobs:
         REPO_NAME=${{ env.repository }}-repo
         API_URL="/api/repositories/${REPO_NAME}"
         # Fetch the repository and capture the HTTP status code
-        RESPONSE=$(jfrog rt curl -X GET "/artifactory/api/repositories/$REPO_NAME" || true)
+        RESPONSE=$(jfrog rt curl -X GET "/artifactory/api/repositories/maventest-libs-release" || true)
         echo $RESPONSE
         # jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         
