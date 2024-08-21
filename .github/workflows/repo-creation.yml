@@ -33,5 +33,6 @@ jobs:
           echo "Repository exists, no need to create."
         else
           echo "Repository does not exist,"
+        fi
         # jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         
