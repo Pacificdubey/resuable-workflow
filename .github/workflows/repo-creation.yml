@@ -2,7 +2,10 @@ name: Repository Creation Task
 
 on:
   workflow_call:
-
+    outputs:
+      repo_name:
+        description: 'The name of the JFrog repository created'
+        value: ${{ steps.create_repo.outputs.repo_name }}
 jobs:
   create-repo:
     runs-on: ubuntu-latest
@@ -27,8 +30,10 @@ jobs:
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
     - name: Check and Create Repository
+      id: create_repo
       run: |
         REPO_NAME=${{ env.repository }}-repo
+        echo "repo_name=$REPO_NAME" >> $GITHUB_OUTPUT
         API_URL="/api/repositories/${REPO_NAME}"
 
         # Fetch the repository and capture the HTTP status code
