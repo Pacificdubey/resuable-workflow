@@ -29,7 +29,7 @@ jobs:
     - name: Check and Create Repository
       run: |
         REPO_NAME=${{ env.repository }}-repo
-        API_URL="/api/repositories/maventest-libs-release-local"
+        API_URL="/api/repositories/${REPO_NAME}"
 
         # Fetch the repository and capture the HTTP status code
         RESPONSE=$(jfrog rt curl -X GET "$API_URL" || true)
@@ -38,6 +38,7 @@ jobs:
             echo "Repository exists: $REPO_NAME"
         else
            echo "Repository does not exist"
+           jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         fi
-        # jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
+        
         
