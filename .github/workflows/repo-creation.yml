@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
       repo_name:
-        description: 'The name of the JFrog repository created'
+        description: 'The name of  JFrog repository created'
         value: ${{ steps.create_repo.outputs.repo_name }}
 jobs:
   create-repo:
