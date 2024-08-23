@@ -12,6 +12,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    outputs:
+      repo_name: ${{ steps.create_repo.outputs.outputs.repo_name }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
