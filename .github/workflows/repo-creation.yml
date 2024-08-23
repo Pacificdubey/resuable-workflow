@@ -5,7 +5,7 @@ on:
     outputs:
       repo_name:
         description: 'The name of the JFrog repository created'
-        value: ${{ steps.create_repo.outputs.repo_name }}
+        value: ${{ jobs.create-repo.outputs.repo_name }}
 jobs:
   create-repo:
     runs-on: ubuntu-latest
