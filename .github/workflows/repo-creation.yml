@@ -15,6 +15,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        repository: Pacificdubey/resuable-workflow  # Checkout reusable workflow repository
+        ref: main  # Branch reference
     - name: JFrog Setup
       id: setup-cli
       uses: jfrog/setup-jfrog-cli@v4.2.2
