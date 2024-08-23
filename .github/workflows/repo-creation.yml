@@ -13,7 +13,7 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      repo_name: ${{ steps.create_repo.outputs.outputs.repo_name }}
+      repo_name: ${{ steps.create_repo.outputs.repo }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -49,6 +49,6 @@ jobs:
            echo "Repository does not exist"
            jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         fi
-        echo "repo_name=$REPO_NAME" >> $GITHUB_OUTPUT
+        echo "repo=$REPO_NAME" >> $GITHUB_OUTPUT
         
         
