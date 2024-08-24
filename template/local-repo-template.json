@@ -1,6 +1,5 @@
 {    
   "key": "${repo}",
   "packageType": "maven",
-  "rclass": "local",
-  "indexing": true
+  "rclass": "local"
 }
