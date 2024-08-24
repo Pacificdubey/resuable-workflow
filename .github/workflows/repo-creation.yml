@@ -54,6 +54,6 @@ jobs:
       run: |
         jfrog rt curl -X POST "/api/repositories/${{ steps.create_repo.outputs.repo }}/indexing" \
           -H "Content-Type: application/json" \
-          -d '{"enabled": true}
+          -d '{"enabled": true}'
         
         
