@@ -50,10 +50,4 @@ jobs:
            jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
         fi
         echo "repo=$REPO_NAME" >> $GITHUB_OUTPUT
-    - name: Enable Indexing for Repository
-      run: |
-        jfrog rt curl -X POST "/api/repositories/${{ steps.create_repo.outputs.repo }}/indexing" \
-          -H "Content-Type: application/json" \
-          -d '{"enabled": true}'
-        
         
