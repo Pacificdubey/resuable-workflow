@@ -2,6 +2,11 @@ name: Repository Creation Task
 
 on:
   workflow_call:
+    inputs:
+     repo_type:
+       description: 'Type of repository (generic, maven, etc.)'
+       required: true
+       type: string
     outputs:
       repo_name:
         description: 'The name of the JFrog repository created'
@@ -39,6 +44,14 @@ jobs:
       run: |
         REPO_NAME=${{ env.repository }}-repo
         API_URL="/api/repositories/${REPO_NAME}"
+        if [ "${{ inputs.repo_type }}" == "maven" ]; then
+          TEMPLATE_FILE="template/maven-repo-template.json"
+        elif [ "${{ inputs.repo_type }}" == "generic" ]; then
+          TEMPLATE_FILE="template/generic-repo-template.json"
+        else
+          echo "Unsupported repository type: ${{ inputs.repo_type }}"
+          exit 1
+        fi
 
         # Fetch the repository and capture the HTTP status code
         RESPONSE=$(jfrog rt curl -X GET "$API_URL" || true)
@@ -47,7 +60,7 @@ jobs:
             echo "Repository exists: $REPO_NAME"
         else
            echo "Repository does not exist"
-           jfrog rt rc template/local-repo-template.json --vars repo=$REPO_NAME
+           jfrog rt rc $TEMPLATE_FILE --vars repo=$REPO_NAME
         fi
         echo "repo=$REPO_NAME" >> $GITHUB_OUTPUT
         
