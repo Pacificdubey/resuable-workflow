@@ -1,5 +1,5 @@
 {    
-  "key": "${repo}",
+  "key": "${repo}-maven",
   "packageType": "maven",
   "rclass": "local"
 }
