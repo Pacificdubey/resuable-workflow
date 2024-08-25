@@ -42,7 +42,7 @@ jobs:
     - name: Check and Create Repository
       id: create_repo
       run: |
-        REPO_NAME=${{ env.repository }}-repo
+        REPO_NAME=${{ env.repository }}-${{ inputs.repo_type }}-repo
         API_URL="/api/repositories/${REPO_NAME}"
         if [ "${{ inputs.repo_type }}" == "maven" ]; then
           TEMPLATE_FILE="template/maven-repo-template.json"
