@@ -1,5 +1,5 @@
 {    
-  "key": "${repo}",
+  "key": "${repo}-generic",
   "packageType": "generic",
   "rclass": "local"
 }
