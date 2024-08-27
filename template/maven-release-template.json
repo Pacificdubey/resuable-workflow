@@ -1,0 +1,9 @@
+{
+  "key": "${repo}",
+  "packageType": "maven",
+  "rclass": "local",
+  "repoLayoutRef": "maven-2-default",
+  "handleReleases": true,
+  "handleSnapshots": false
+}
+
