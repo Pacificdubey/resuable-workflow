@@ -2,15 +2,13 @@ name: Repository Creation Task
 
 on:
   workflow_call:
-    inputs:
-     repo_type:
-       description: 'Type of repository (generic, maven, etc.)'
-       required: true
-       type: string
-    outputs:
-      repo_name:
-        description: 'The name of the JFrog repository created'
-        value: ${{ jobs.create-repo.outputs.repo_name }}
+   outputs:
+    release_repo:
+        description: 'The name of the JFrog release repository created'
+        value: ${{ jobs.create-repo.outputs.release_repo_name }}
+    snapshot_repo:
+        description: 'The name of the JFrog snapshot repository created'
+        value: ${{ jobs.create-repo.outputs.snapshot_repo_name }}
 jobs:
   create-repo:
     runs-on: ubuntu-latest
@@ -18,7 +16,8 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      repo_name: ${{ steps.create_repo.outputs.repo }}
+      release_repo_name: ${{ steps.create_release_repo.outputs.repo }}
+      snapshot_repo_name: ${{ steps.create_snapshot_repo.outputs.repo }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -39,20 +38,13 @@ jobs:
         echo "repository=$(echo $BRANCH_NAME | sed 's/\//_/g')" >> $GITHUB_ENV
         echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
-    - name: Check and Create Repository
-      id: create_repo
-      run: |
-        REPO_NAME=${{ env.repository }}-${{ inputs.repo_type }}-repo
-        API_URL="/api/repositories/${REPO_NAME}"
-        if [ "${{ inputs.repo_type }}" == "maven" ]; then
-          TEMPLATE_FILE="template/maven-repo-template.json"
-        elif [ "${{ inputs.repo_type }}" == "generic" ]; then
-          TEMPLATE_FILE="template/generic-repo-template.json"
-        else
-          echo "Unsupported repository type: ${{ inputs.repo_type }}"
-          exit 1
-        fi
 
+# Create Release Repo
+    - name: Check and Create Repository
+      id: create_release_repo
+      run: |
+        REPO_NAME=${{ env.repository }}-maven-release
+        API_URL="/api/repositories/${REPO_NAME}"
         # Fetch the repository and capture the HTTP status code
         RESPONSE=$(jfrog rt curl -X GET "$API_URL" || true)
         echo "$RESPONSE"
@@ -60,7 +52,23 @@ jobs:
             echo "Repository exists: $REPO_NAME"
         else
            echo "Repository does not exist"
-           jfrog rt rc $TEMPLATE_FILE --vars repo=$REPO_NAME
+           jfrog rt rc template/maven-release-template.json --vars repo=$REPO_NAME
+        fi
+        echo "repo=$REPO_NAME" >> $GITHUB_OUTPUT
+# Create Snapshot repo
+    - name: Check and Create Repository
+      id: create_snapshot_repo
+      run: |
+        REPO_NAME=${{ env.repository }}-maven-snapshot
+        API_URL="/api/repositories/${REPO_NAME}"
+        # Fetch the repository and capture the HTTP status code
+        RESPONSE=$(jfrog rt curl -X GET "$API_URL" || true)
+        echo "$RESPONSE"
+        if echo "$RESPONSE" | grep -q '"key"'; then
+            echo "Repository exists: $REPO_NAME"
+        else
+           echo "Repository does not exist"
+           jfrog rt rc template/maven-snapshot-template.json --vars repo=$REPO_NAME
         fi
         echo "repo=$REPO_NAME" >> $GITHUB_OUTPUT
         
