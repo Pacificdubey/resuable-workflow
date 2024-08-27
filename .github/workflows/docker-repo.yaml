@@ -3,12 +3,10 @@ name: Repository Creation Task
 on:
   workflow_call:
    outputs:
-    release_repo:
+    docker_repo:
         description: 'The name of the JFrog release repository created'
-        value: ${{ jobs.create-repo.outputs.release_repo_name }}
-    snapshot_repo:
-        description: 'The name of the JFrog snapshot repository created'
-        value: ${{ jobs.create-repo.outputs.snapshot_repo_name }}
+        value: ${{ jobs.create-repo.outputs.docker_repo_name }}
+
 jobs:
   create-repo:
     runs-on: ubuntu-latest
@@ -16,8 +14,7 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      release_repo_name: ${{ steps.create_release_repo.outputs.repo }}
-      snapshot_repo_name: ${{ steps.create_snapshot_repo.outputs.repo }}
+      docker_repo_name: ${{ steps.create_docker_repo.outputs.repo }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -40,9 +37,9 @@ jobs:
 
 # Create Docker Repo
     - name: Check and Create Repository
-      id: create_release_repo
+      id: create_docker_repo
       run: |
-        REPO_NAME=${{ env.repository }}-maven-release
+        REPO_NAME=${{ env.repository }}-docker
         API_URL="/api/repositories/${REPO_NAME}"
         # Fetch the repository and capture the HTTP status code
         RESPONSE=$(jfrog rt curl -X GET "$API_URL" || true)
