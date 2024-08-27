@@ -3,6 +3,6 @@
   "packageType": "maven",
   "rclass": "local",
   "repoLayoutRef": "maven-2-default",
-  "handleReleases": false,
-  "handleSnapshots": true
+  "handleReleases": "false",
+  "handleSnapshots": "true"
 }
