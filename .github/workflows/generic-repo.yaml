@@ -3,9 +3,9 @@ name: Repository Creation Task
 on:
   workflow_call:
    outputs:
-    docker_repo:
+    generic_repo:
         description: 'The name of the JFrog release repository created'
-        value: ${{ jobs.create-repo.outputs.docker_repo_name }}
+        value: ${{ jobs.create-repo.outputs.generic_repo_name }}
 
 jobs:
   create-repo:
@@ -14,7 +14,7 @@ jobs:
       id-token: write
       contents: read
     outputs:
-      docker_repo_name: ${{ steps.create_docker_repo.outputs.repo }}
+      generic_repo_name: ${{ steps.create_generic_repo.outputs.repo }}
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
 
 # Create Generic Repo
     - name: Check and Create Repository
-      id: create_docker_repo
+      id: create_generic_repo
       run: |
         REPO_NAME=${{ env.repository }}-generic
         API_URL="/api/repositories/${REPO_NAME}"
