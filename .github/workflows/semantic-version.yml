@@ -36,7 +36,7 @@ jobs:
       # git configuration
       - name: Configure Git
         run: |
-          git config --global user.email "pacific.prashantdubey@gmail.com"
+          # git config --global user.email "pacific.prashantdubey@gmail.com"
           git config --global user.name "${{ github.actor }}"
 
       - name: Pull latest changes
