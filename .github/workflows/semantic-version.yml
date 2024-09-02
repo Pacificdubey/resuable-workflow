@@ -30,13 +30,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 
+      - name: Get last committer's email
+        id: get-email
+        run: |
+          EMAIL=$(git log -1 --pretty=format:'%ae')
+          echo "Last committer's email: $EMAIL"
+          echo "COMMITTER_EMAIL=$EMAIL" >> $GITHUB_ENV
           
       # git configuration
       - name: Configure Git
         run: |
-          # git config --global user.email "pacific.prashantdubey@gmail.com"
+          # git config --global user.email "${{ env.COMMITTER_EMAIL }}"
           git config --global user.name "${{ github.actor }}"
 
       - name: Pull latest changes
