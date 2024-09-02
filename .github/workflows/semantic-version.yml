@@ -75,6 +75,7 @@ jobs:
         run: |
           git config --global user.email "pacific.prashantdubey@gmail.com"
           git config --global user.name "${{ github.actor }}"
+          git pull
           git add ${{ inputs.version_file_path }}
           git commit -m "Update version to ${{ steps.calc_version.outputs.version }}"
           git push
