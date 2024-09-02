@@ -1,0 +1,54 @@
+name: Semantic Versioning
+
+on:
+  workflow_call:
+    inputs:
+      major:
+        required: false
+        type: boolean
+      minor:
+        required: false
+        type: boolean
+      patch:
+        required: true
+        type: boolean
+      version_file_path:
+        required: true
+        type: string
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.calc_version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Calculate new version
+        id: calc_version
+        run: |
+          echo "Calculating new version based on inputs..."
+          VERSION=$(cat ${{ inputs.version_file_path }})
+          IFS='.' read -ra ADDR <<< "$VERSION"
+          if [[ ${{ inputs.major }} == 'true' ]]; then
+            let ADDR[0]+=1
+            ADDR[1]=0
+            ADDR[2]=0
+          elif [[ ${{ inputs.minor }} == 'true' ]]; then
+            let ADDR[1]+=1
+            ADDR[2]=0
+          elif [[ ${{ inputs.patch }} == 'true' ]]; then
+            let ADDR[2]+=1
+          fi
+          NEW_VERSION="${ADDR[0]}.${ADDR[1]}.${ADDR[2]}"
+          echo "version=$NEW_VERSION" > $GITHUB_OUTPUT
+          echo $NEW_VERSION > ${{ inputs.version_file_path }}
+
+      - name: Commit new version
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add ${{ inputs.version_file_path }}
+          git commit -m "Update version to ${{ steps.calc_version.outputs.version }}"
+          git push
