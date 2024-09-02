@@ -29,21 +29,39 @@ jobs:
         id: calc_version
         run: |
           echo "Calculating new version based on inputs..."
-          VERSION=$(cat ${{ inputs.version_file_path }})
+          # Read only the last line from version.txt assuming it holds the version number
+          VERSION=$(tail -n 1 ${{ inputs.version_file_path }})
+
+          # Validate the version format
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Invalid version format - $VERSION"
+            exit 1
+          fi
+
           IFS='.' read -ra ADDR <<< "$VERSION"
-          if [[ ${{ inputs.major }} == 'true' ]]; then
+
+          # Increment version based on input flags
+          if ${{ inputs.major }}; then
             let ADDR[0]+=1
             ADDR[1]=0
             ADDR[2]=0
-          elif [[ ${{ inputs.minor }} == 'true' ]]; then
+          elif ${{ inputs.minor }}; then
             let ADDR[1]+=1
             ADDR[2]=0
-          elif [[ ${{ inputs.patch }} == 'true' ]]; then
+          elif ${{ inputs.patch }}; then
             let ADDR[2]+=1
           fi
+
           NEW_VERSION="${ADDR[0]}.${ADDR[1]}.${ADDR[2]}"
-          echo "version=$NEW_VERSION" > $GITHUB_OUTPUT
-          echo $NEW_VERSION > ${{ inputs.version_file_path }}
+          echo "New version: $NEW_VERSION"
+
+          # Use GITHUB_OUTPUT to set the new version
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          # Update the version file, preserving the comment
+          echo "# <MAJOR>.<MINOR>.<PATCH>" > ${{ inputs.version_file_path }}
+          echo $NEW_VERSION >> ${{ inputs.version_file_path }}
+        shell: bash
 
       - name: Commit new version
         run: |
