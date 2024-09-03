@@ -19,6 +19,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          repository: 'Pacificdubey/resuable-workflow'  # Specify the repository where the reusable workflow resides
+          ref: 'main'  # Optional: specify the branch if needed
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
