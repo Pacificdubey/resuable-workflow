@@ -45,5 +45,5 @@ jobs:
             artifactory-cleanup --config ${{ inputs.config_path }} --destroy
           fi
         env:
-         ARTIFACTORY_USERNAME: ${{ steps.setup-cli.outputs.oidc-user }}
-         ARTIFACTORY_PASSWORD: ${{ steps.setup-cli.outputs.oidc-token }}
+         ARTIFACTORY_USERNAME: ${{ secrets.USERNAME }}
+         ARTIFACTORY_PASSWORD: ${{ secrets.API_KEY }}
