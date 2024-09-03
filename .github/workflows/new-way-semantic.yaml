@@ -1,39 +1,36 @@
-name: "Semantic Release to JFrog Artifactory"
+name: "Generate Semantic Version"
 
 on:
   workflow_call:
-    secrets:
-      github_token:
-        required: true
-      jfrog_username:
-        required: true
-      jfrog_password:
-        required: true
+    outputs:
+      new_version:
+        description: "The newly generated semantic version"
+        value: ${{ steps.semantic.outputs.next_version }}
 
 jobs:
-  release-and-upload:
+  versioning:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '14'
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install semantic-release and plugins
+        run: |
+          npm install semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/exec
 
       - name: Run semantic-release
+        id: semantic
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Artifact
-        run: |
-          echo "Dummy content representing the artifact." > artifact.txt
-
-      - name: Upload Artifact to JFrog Artifactory
-        run: |
-          curl -u${{ secrets.jfrog_username }}:${{ secrets.jfrog_password }} -T artifact.txt "https://yourdomain.jfrog.io/artifactory/your-repository-path/artifact.txt"
+      - name: Output next version
+        if: steps.semantic.outputs.next_version
+        run: echo "new_version=${{ steps.semantic.outputs.next_version }}" >> $GITHUB_ENV
