@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          repository: 'Pacificdubey/resuable-workflow'
       - run: ls -la
 
       - name: Setup Node.js
