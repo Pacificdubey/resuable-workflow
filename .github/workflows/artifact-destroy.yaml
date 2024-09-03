@@ -12,6 +12,11 @@ on:
         description: 'Flag to enable actual deletion of artifacts (true or false)'
         required: true
         type: string
+    secrets:
+        API_KEY:
+          required: true
+        USERNAME:
+          required: true
 
 jobs:
   cleanup-artifact:
