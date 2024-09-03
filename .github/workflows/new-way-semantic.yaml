@@ -39,6 +39,9 @@ jobs:
           fetch-depth: 0
       - name: Run semantic-release
         id: semantic
-        run: npx semantic-release --dry-run
+        run: |
+         npx semantic-release
+         echo "VERSION=$(cat VERSION.txt)" >> $GITHUB_ENV
+         echo "nextRelease_version=$(cat version.txt)" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.custom_token }} 
