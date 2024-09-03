@@ -5,9 +5,9 @@
     "release": "semantic-release"
   },
   "devDependencies": {
-    "semantic-release": "^18.0.0"
+    "semantic-release": "^18.0.0",
+    "@semantic-release/exec": "^6.0.0"  // Ensure you check for the latest compatible version
   },
   "private": true
 }
-
 
