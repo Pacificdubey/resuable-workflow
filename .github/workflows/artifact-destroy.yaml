@@ -7,7 +7,7 @@ on:
         description: 'Optional path to the artifactory-cleanup configuration file'
         required: false
         type: string
-        default: 'config/cleanup-config-1.yml'  # Default configuration path
+        default: 'config/cleanup_config.yml'  # Default configuration path
       destroy:
         description: 'Flag to enable actual deletion of artifacts (true or false)'
         required: true
