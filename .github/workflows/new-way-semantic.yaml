@@ -6,6 +6,9 @@ on:
       new_version:
         description: "The newly generated semantic version"
         value: ${{ jobs.release.outputs.version }}
+    secrets:
+      github_token:
+        required: true
 
 jobs:
   release:
@@ -31,4 +34,4 @@ jobs:
         id: semantic
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.github_token }}
