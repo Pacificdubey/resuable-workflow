@@ -37,6 +37,10 @@ jobs:
 
       - name: Install artifactory-cleanup
         run: python3 -mpip install artifactory-cleanup==1.0.0
+      - name: Create and Verify Config File
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+        run: echo "$USERNAME"
 
       - name: Check installation
         run: artifactory-cleanup --help
