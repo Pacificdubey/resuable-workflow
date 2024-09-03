@@ -89,16 +89,7 @@ jobs:
       - name: Commit new version
         if: env.NEW_VERSION && (github.ref == 'refs/heads/main' || github.event.pull_request.merged)
         run: |
-         # Ensure we're on the correct branch, especially if this might be from a pull_request event
-         if [ "${{ github.event_name }}" == "pull_request" ]; then
-          # Checkout the base branch of the PR to apply commits there
-         git fetch origin ${{ github.event.pull_request.base.ref }}
-         git checkout ${{ github.event.pull_request.base.ref }}
-         else
-         # Otherwise, ensure we're on the main branch (already checked by the 'if' condition)
-         git checkout ${{ github.ref }}
-         fi
-         # Add changes, commit, and push
-          git add ${{ inputs.version_file_path }}
-          git commit -m "Update version to ${{ env.NEW_VERSION }}"
-          git push origin HEAD
+                git add version.txt
+                git commit -m "Update version to ${{ steps.calc_version.outputs.new_version }}"
+                # Explicitly push to the main branch
+                git push origin main
