@@ -61,7 +61,8 @@ jobs:
           fi
 
           IFS='.' read -ra ADDR <<< "$VERSION"
-          if [[ "${{ github.ref }}" == 'refs/heads/main' ]]; then
+          if ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }} || 
+             (github.event_name == 'pull_request' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'main') {
             if ${{ inputs.major }}; then
               ADDR[0]=$((ADDR[0]+1))
               ADDR[1]=0
@@ -84,7 +85,7 @@ jobs:
         shell: bash
 
       - name: Commit new version
-        if: github.ref == 'refs/heads/main' && env.NEW_VERSION
+        if: env.NEW_VERSION && (github.ref == 'refs/heads/main' || (github.event.pull_request && github.event.pull_request.merged))
         run: |
           git add ${{ inputs.version_file_path }}
           git commit -m "Update version to ${{ steps.calc_version.outputs.version }}"
