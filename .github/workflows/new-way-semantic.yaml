@@ -35,9 +35,6 @@ jobs:
       - name: Install dependencies
         run: npm install
             #- name: Checkout code
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: Run semantic-release
         id: semantic
