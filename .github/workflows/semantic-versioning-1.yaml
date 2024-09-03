@@ -84,7 +84,7 @@ jobs:
           fi
              echo "version=$NEW_VERSION" >> $GITHUB_ENV
              echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-         shell: bash
+        shell: bash
 
       - name: Commit new version
         if: env.NEW_VERSION && (github.ref == 'refs/heads/main' || github.event.pull_request.merged)
