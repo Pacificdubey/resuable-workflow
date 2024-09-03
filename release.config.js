@@ -1,7 +1,12 @@
 module.exports = {
-  branches: ['feature/testing'],
+  branches: [
+    'main',
+    { name: 'develop', prerelease: true },
+    { name: 'feature/*', prerelease: 'beta' }  // Automatically uses the branch name as the identifier
+  ],
   plugins: [
-    '@semantic-release/commit-analyzer',  // Analyzes commits for version bumps
-    '@semantic-release/release-notes-generator'  // Generates release notes
+    '@semantic-release/commit-analyzer',
+    '@semantic-release/release-notes-generator',
+    #'@semantic-release/github'
   ]
 };
