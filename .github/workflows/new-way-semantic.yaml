@@ -1,20 +1,22 @@
-name: "Generate Semantic Version"
+name: "Semantic Release"
 
 on:
   workflow_call:
     outputs:
       new_version:
         description: "The newly generated semantic version"
-        value: ${{ steps.semantic.outputs.next_version }}
+        value: ${{ jobs.release.outputs.version }}
 
 jobs:
-  versioning:
+  release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Essential for semantic-release to access all commits
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -23,7 +25,7 @@ jobs:
 
       - name: Install semantic-release and plugins
         run: |
-          npm install semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/exec
+          npm install semantic-release @semantic-release/changelog @semantic-release/git
 
       - name: Run semantic-release
         id: semantic
@@ -31,6 +33,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Output next version
-        if: steps.semantic.outputs.next_version
-        run: echo "new_version=${{ steps.semantic.outputs.next_version }}" >> $GITHUB_ENV
+      - name: Set the new version number
+        id: get_version
+        run: echo "version=${{ steps.semantic.outputs.nextRelease.version }}" >> $GITHUB_OUTPUT
