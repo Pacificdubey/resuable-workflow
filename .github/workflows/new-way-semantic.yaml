@@ -36,6 +36,11 @@ jobs:
         run: npm install
             #- name: Checkout code
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Run semantic-release
         id: semantic
         run: npx semantic-release --dry-run
