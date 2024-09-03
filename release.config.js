@@ -2,7 +2,7 @@ module.exports = {
   branches: [
     'main',
     { name: 'develop', prerelease: true },
-    { name: 'feature/*', prerelease: 'beta' }  // Automatically uses the branch name as the identifier
+    { name: 'feature/testing', prerelease: 'beta' }  // Automatically uses the branch name as the identifier
   ],
   plugins: [
     '@semantic-release/commit-analyzer',
