@@ -1,7 +1,7 @@
 # artifactory-cleanup.yaml
 artifactory-cleanup:
   server: https://prashanttest.jfrog.io/artifactory
-  user: $USERNAME
+  user: $ARTIFACTORY_USERNAME
   password: $API_KEY
   policies:
     - name: Conan - delete files older than 60 days
