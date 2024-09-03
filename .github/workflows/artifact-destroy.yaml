@@ -13,10 +13,10 @@ on:
         required: true
         type: string
     secrets:
-        API_KEY:
-          required: true
-        USERNAME:
-          required: true
+      API_KEY:
+        required: true
+      USERNAME:
+        required: true
 
 jobs:
   cleanup-artifact:
