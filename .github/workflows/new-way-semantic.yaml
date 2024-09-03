@@ -20,14 +20,14 @@ jobs:
       version: ${{ steps.semantic.outputs.nextRelease.version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: Pacificdubey/resuable-workflow
           fetch-depth: 0
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      #- name: Checkout code
+       # uses: actions/checkout@v2
+        #with:
+         # fetch-depth: 0
           
       - run: ls -la
 
