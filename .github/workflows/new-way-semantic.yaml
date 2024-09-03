@@ -1,0 +1,39 @@
+name: "Semantic Release to JFrog Artifactory"
+
+on:
+  workflow_call:
+    secrets:
+      github_token:
+        required: true
+      jfrog_username:
+        required: true
+      jfrog_password:
+        required: true
+
+jobs:
+  release-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run semantic-release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+
+      - name: Build Artifact
+        run: |
+          echo "Dummy content representing the artifact." > artifact.txt
+
+      - name: Upload Artifact to JFrog Artifactory
+        run: |
+          curl -u${{ secrets.jfrog_username }}:${{ secrets.jfrog_password }} -T artifact.txt "https://yourdomain.jfrog.io/artifactory/your-repository-path/artifact.txt"
