@@ -1,8 +1,13 @@
 {
+  "name": "your-project",
+  "version": "0.0.0",
+  "scripts": {
+    "release": "semantic-release"
+  },
   "devDependencies": {
     "semantic-release": "^17.4.7",
     "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/exec": "^6.0.2"
-  }
+    "@semantic-release/git": "^10.0.1"
+  },
+  "private": true
 }
