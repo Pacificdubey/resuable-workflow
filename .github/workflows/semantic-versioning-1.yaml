@@ -56,37 +56,46 @@ jobs:
         run: |
           VERSION=$(tail -n 1 ${{ inputs.version_file_path }})
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Error: Invalid version format - $VERSION"
-            exit 1
+          echo "Error: Invalid version format - $VERSION"
+          exit 1
           fi
 
           IFS='.' read -ra ADDR <<< "$VERSION"
-          if ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }} || 
-             (github.event_name == 'pull_request' && github.event.pull_request.merged && github.event.pull_request.base.ref == 'main') {
-            if ${{ inputs.major }}; then
-              ADDR[0]=$((ADDR[0]+1))
-              ADDR[1]=0
-              ADDR[2]=0
-            elif ${{ inputs.minor }}; then
-              ADDR[1]=$((ADDR[1]+1))
-              ADDR[2]=0
-            elif ${{ inputs.patch }}; then
-              ADDR[2]=$((ADDR[2]+1))
-            fi
-            NEW_VERSION="${ADDR[0]}.${ADDR[1]}.${ADDR[2]}"
-            echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-            echo "# <MAJOR>.<MINOR>.<PATCH>" > ${{ inputs.version_file_path }}
-            echo "$NEW_VERSION" >> ${{ inputs.version_file_path }}
+          # Determine if it's a push to main or a merged PR into main
+          if [[ "${{ github.ref }}" == 'refs/heads/main' || ( "${{ github.event_name }}" == 'pull_request' && ${{ github.event.pull_request.merged }} && "${{ github.event.pull_request.base.ref }}" == 'main' ) ]]; then
+          if ${{ inputs.major }}; then
+           ADDR[0]=$((ADDR[0]+1))
+           ADDR[1]=0
+           ADDR[2]=0
+          elif ${{ inputs.minor }}; then
+           ADDR[1]=$((ADDR[1]+1))
+           ADDR[2]=0
+          elif ${{ inputs.patch }}; then
+           ADDR[2]=$((ADDR[2]+1))
+          fi
+          NEW_VERSION="${ADDR[0]}.${ADDR[1]}.${ADDR[2]}"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "# <MAJOR>.<MINOR>.<PATCH>" > ${{ inputs.version_file_path }}
+          echo "$NEW_VERSION" >> ${{ inputs.version_file_path }}
           else
-            NEW_VERSION=$VERSION
+          NEW_VERSION=$VERSION
           fi
           echo "version=$NEW_VERSION" >> $GITHUB_ENV
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-        shell: bash
-
+          shell: bash
       - name: Commit new version
-        if: env.NEW_VERSION && (github.ref == 'refs/heads/main' || (github.event.pull_request && github.event.pull_request.merged))
+        if: env.NEW_VERSION && (github.ref == 'refs/heads/main' || github.event.pull_request.merged)
         run: |
+         # Ensure we're on the correct branch, especially if this might be from a pull_request event
+         if [ "${{ github.event_name }}" == "pull_request" ]; then
+          # Checkout the base branch of the PR to apply commits there
+         git fetch origin ${{ github.event.pull_request.base.ref }}
+         git checkout ${{ github.event.pull_request.base.ref }}
+         else
+         # Otherwise, ensure we're on the main branch (already checked by the 'if' condition)
+         git checkout ${{ github.ref }}
+         fi
+         # Add changes, commit, and push
           git add ${{ inputs.version_file_path }}
-          git commit -m "Update version to ${{ steps.calc_version.outputs.version }}"
-          git push origin ${{ github.head_ref }}
+          git commit -m "Update version to ${{ env.NEW_VERSION }}"
+          git push origin HEAD
