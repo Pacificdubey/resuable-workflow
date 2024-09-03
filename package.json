@@ -5,9 +5,10 @@
     "release": "semantic-release"
   },
   "devDependencies": {
-    "semantic-release": "^17.4.7",
+    "semantic-release": "^18.0.0",  // Update this to a version >=18.0.0
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^10.0.1"
   },
   "private": true
 }
+
