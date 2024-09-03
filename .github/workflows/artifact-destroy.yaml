@@ -40,7 +40,10 @@ jobs:
           oidc-audience: git-aud
       - name: Run Cleanup
         run: |
-          artifactory-cleanup --config ${{ inputs.config_path }} --${{ inputs.destroy }}
+          # Conditional destruction based on input
+          if [ "${{ inputs.destroy }}" == "true" ]; then
+            artifactory-cleanup --config ${{ inputs.config_path }} --destroy
+          fi
         env:
          ARTIFACTORY_USERNAME: ${{ steps.setup-cli.outputs.oidc-user }}
          ARTIFACTORY_PASSWORD: ${{ steps.setup-cli.outputs.oidc-token }}
