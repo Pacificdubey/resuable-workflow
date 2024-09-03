@@ -1,0 +1,46 @@
+name: Artifactory Cleanup
+
+on:
+  workflow_call:
+    inputs:
+      config_path:
+        description: 'Optional path to the artifactory-cleanup configuration file'
+        required: false
+        type: string
+        default: 'config/cleanup-config-1.yml'  # Default configuration path
+      destroy:
+        description: 'Flag to enable actual deletion of artifacts (true or false)'
+        required: true
+        type: string
+
+jobs:
+  cleanup-artifact:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # Specify the Python version
+
+      - name: Install artifactory-cleanup
+        run: python3 -mpip install artifactory-cleanup==1.0.0
+
+      - name: Check installation
+        run: artifactory-cleanup --help
+      - name: JFrog Setup
+        id: setup-cli
+        uses: jfrog/setup-jfrog-cli@v4.2.2
+        env:
+          JF_URL: ${{ vars.JF_URL }} # This should be the base URL of your Artifactory
+        with:
+          oidc-provider-name: gittest
+          oidc-audience: git-aud
+      - name: Run Cleanup
+        run: |
+          artifactory-cleanup --config ${{ inputs.config_path }} --${{ inputs.destroy }}
+        env:
+         ARTIFACTORY_USERNAME: ${{ steps.setup-cli.outputs.oidc-user }}
+         ARTIFACTORY_PASSWORD: ${{ steps.setup-cli.outputs.oidc-token }}
