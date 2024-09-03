@@ -1,14 +1,7 @@
 module.exports = {
   branches: ['feature/testing'],
   plugins: [
-    '@semantic-release/commit-analyzer',
-    '@semantic-release/release-notes-generator',
-    '@semantic-release/changelog',
-    {
-      path: '@semantic-release/git',
-      assets: ['CHANGELOG.md', 'package.json'],
-      message: 'chore(release): ${nextRelease.version} [skip ci]'
-    }
+    '@semantic-release/commit-analyzer',  // Analyzes commits for version bumps
+    '@semantic-release/release-notes-generator'  // Generates release notes
   ]
 };
-
