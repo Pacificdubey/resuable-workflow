@@ -44,11 +44,11 @@ jobs:
       # git configuration
       - name: Configure Git
         run: |
-          # git config --global user.email "${{ env.COMMITTER_EMAIL }}"
+          git config --global user.email "${{ env.COMMITTER_EMAIL }}"
           git config --global user.name "${{ github.actor }}"
 
-      - name: Pull latest changes
-        run: git pull origin ${{ github.head_ref }} --rebase
+      #- name: Pull latest changes
+       # run: git pull origin ${{ github.head_ref }} --rebase
 
 
       - name: Calculate new version
