@@ -44,6 +44,6 @@ jobs:
           if [ "${{ inputs.destroy }}" == "true" ]; then
             artifactory-cleanup --config ${{ inputs.config_path }} --destroy
           fi
-        env:
-         ARTIFACTORY_USERNAME: ${{ secrets.USERNAME }}
-         ARTIFACTORY_PASSWORD: ${{ secrets.API_KEY }}
+        #env:
+         #ARTIFACTORY_USERNAME: ${{ secrets.USERNAME }}
+         #ARTIFACTORY_PASSWORD: ${{ secrets.API_KEY }}
