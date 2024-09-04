@@ -5,7 +5,7 @@
     "release": "semantic-release"
   },
   "devDependencies": {
-    "semantic-release": "^18.0.0",  
+    "semantic-release": "^18.0.0"  
   },
   "private": true
 }
