@@ -1,0 +1,68 @@
+---
+name: Test Semantic
+ 
+on:
+  push:
+    paths:
+      - 'README.md'
+  pull_request:
+    branches:
+      - do_not_run
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Modified Files # track changes files relative to target branch
+        id: get-modified-files
+        uses: tj-actions/changed-files@v44
+        with:
+          base_sha: ${{ steps.get-base-sha.outputs.sha }}
+          matrix: 'true'
+
+          
+      - name: upload artifact
+        uses: mcd-actions/jfrog-upload-artifact@v1
+        with:
+          source: './'
+          destination: 'mcd.jfrog.io/artifactory/gdap-maven-dev-local/generic_upload/'
+          dd-api-key: ${{ secrets.MCD_ACTIONS_DD_API_KEY }}
+          #github-token: "github token"
+        
+        
+  deploy_dev:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name != 'pull_request'
+    environment: dev-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: show branch  # generating hash # git merge-base finds the best common ancestor(s) between two commits to use in a three-way merge. 
+        run: |
+          echo ${{ env.BRANCH_NAME }}
+
+      - name: Semantic Release
+        id: release
+        timeout-minutes: 5
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_REPO: ${{ github.repositoryUrl }}
+        run: |
+          npm install --no-save \
+            semantic-release@22.0.12 \
+            @semantic-release/commit-analyzer@11.1.0 \
+            conventional-changelog-conventionalcommits@7.0.2 \
+            @semantic-release/exec@6.0.3 \
+            @semantic-release/git@10.0.1 \
+            @semantic-release/github@9.2.6 \
+            @semantic-release/release-notes-generator@12.1.0 \
+            @semantic-release/changelog@6.0.3
+          node .releaserc.mjs ${{ env.BRANCH_NAME }}
+        
