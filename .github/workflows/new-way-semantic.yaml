@@ -32,7 +32,7 @@ jobs:
          node-version: '20'  # Make sure this is 16 or higher
 
       - name: Install semantic-release
-        run: npm install semantic-release@latest
+        run: npm install semantic-release@24.1.0
       - name: Checkout code
         uses: actions/checkout@v4
         with:
