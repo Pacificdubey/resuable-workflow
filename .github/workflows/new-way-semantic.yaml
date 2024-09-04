@@ -38,8 +38,11 @@ jobs:
         with:
           fetch-depth: 0
           
-      - name: Fetch all history for all tags and branches
-        run: git fetch --prune
+      - name: Fetch all history and tags
+        run: git fetch --prune --unshallow || git fetch --prune
+
+      - name: Ensure branch is up-to-date
+        run: git reset --hard origin/${{ github.ref_name }}
         
       - name: Run semantic-release
         id: semantic
