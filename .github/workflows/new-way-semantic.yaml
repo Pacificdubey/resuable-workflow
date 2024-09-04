@@ -6,7 +6,7 @@ on:
     outputs:
       new_version:
         description: "The newly generated semantic version"
-        value: ${{ jobs.release.outputs.version }}
+        value: ${{ jobs.semantic-versioning.outputs.version }}
     secrets:
       custom_token:
         required: true  # Rename 'github_token' to 'custom_token' or similar
@@ -15,10 +15,10 @@ permissions:
   pull-requests: write
   issues: write
 jobs:
-  release:
+  semantic-versioning:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.semantic.outputs.nextRelease.version }}
+      version: ${{ steps.set_version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,8 +31,8 @@ jobs:
         with:
          node-version: '20'  # Make sure this is 16 or higher
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install semantic-release
+        run: npm install semantic-release@latest
       - name: Checkout code
         uses: actions/checkout@v4
         with:
