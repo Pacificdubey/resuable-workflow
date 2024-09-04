@@ -33,20 +33,21 @@ jobs:
 
       - name: Install semantic-release
         run: npm install semantic-release@24.1.0
-      #- name: Checkout code
-       # uses: actions/checkout@v4
-        #with:
-         # fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
           
       - name: Fetch all history and tags
         run: git fetch --prune --unshallow || git fetch --prune
 
-      #- name: Ensure branch is up-to-date
-       # run: git reset --hard origin/${{ github.ref_name }}
+      - name: Ensure branch is up-to-date
+        run: git reset --hard origin/${{ github.ref_name }}
         
       - name: Run Semantic Release and Set Output
         id: set_version
         run: |
+          npm install semantic-release@24.1.0
           output=$(npx semantic-release)
           echo "Full log:"
           echo "$output"
