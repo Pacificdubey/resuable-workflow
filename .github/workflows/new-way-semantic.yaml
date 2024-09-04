@@ -44,9 +44,19 @@ jobs:
       - name: Ensure branch is up-to-date
         run: git reset --hard origin/${{ github.ref_name }}
         
-      - name: Run semantic-release
-        id: semantic
+      - name: Run Semantic Release and Set Output
+        id: set_version
         run: |
-         npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.custom_token }} 
+          output=$(npx semantic-release)
+          echo "Full log:"
+          echo "$output"
+          if echo "$output" | grep -q "Published release"; then
+            version=$(echo "$output" | grep -oP 'Published release \K[^\s]+')
+          elif echo "$output" | grep -q "Found git tag"; then
+            version=$(echo "$output" | grep -oP 'Found git tag v[^\s]+ associated with version \K[^\s]+')
+          else
+            version=$(git describe --tags $(git rev-list --tags --max-count=1))
+          fi
+          echo "version=$version" >> $GITHUB_OUTPUT
+        #env:
+         # GITHUB_TOKEN: ${{ secrets.custom_token }} 
