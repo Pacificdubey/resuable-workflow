@@ -44,7 +44,7 @@ jobs:
             @semantic-release/release-notes-generator@12.1.0 \
             @semantic-release/changelog@6.0.3
           
-          node .releaserc.mjs ${{ github.ref_name }}  # Fixed: Removed extra parenthesis
+          node .releaserc.mjs 
 
           echo "PREV_TAG=v${{ steps.semantic.outputs.lastRelease.version }}" >> $GITHUB_ENV
           echo "NEXT_TAG=v${{ steps.semantic.outputs.nextRelease.version }}" >> $GITHUB_ENV
