@@ -25,14 +25,6 @@ jobs:
           base_sha: ${{ steps.get-base-sha.outputs.sha }}
           matrix: 'true'
 
-          
-      - name: upload artifact
-        uses: mcd-actions/jfrog-upload-artifact@v1
-        with:
-          source: './'
-          destination: 'mcd.jfrog.io/artifactory/gdap-maven-dev-local/generic_upload/'
-          dd-api-key: ${{ secrets.MCD_ACTIONS_DD_API_KEY }}
-          #github-token: "github token"
         
         
   deploy_dev:
