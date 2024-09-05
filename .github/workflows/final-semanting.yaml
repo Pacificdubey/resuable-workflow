@@ -31,9 +31,6 @@ jobs:
         with:
           node-version: '20'
 
-      #- name: Install dependencies
-       # run: npm install
-
       - name: Semantic Release
         id: semantic
         run: |
@@ -46,7 +43,9 @@ jobs:
             @semantic-release/github@9.2.6 \
             @semantic-release/release-notes-generator@12.1.0 \
             @semantic-release/changelog@6.0.3
-          node .releaserc.mjs ${{ github.ref_name }})
+          
+          node .releaserc.mjs ${{ github.ref_name }}  # Fixed: Removed extra parenthesis
+
           echo "PREV_TAG=v${{ steps.semantic.outputs.lastRelease.version }}" >> $GITHUB_ENV
           echo "NEXT_TAG=v${{ steps.semantic.outputs.nextRelease.version }}" >> $GITHUB_ENV
           echo "RELEASE_TYPE=${{ steps.semantic.outputs.nextRelease.type }}" >> $GITHUB_ENV
