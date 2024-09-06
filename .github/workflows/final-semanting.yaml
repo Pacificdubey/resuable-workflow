@@ -54,6 +54,6 @@ jobs:
           
           node .releaserc.mjs 
 
-          #echo "PREV_TAG=v${{ steps.semantic.outputs.lastRelease.version }}" >> $GITHUB_OUTPUT
-         # echo "NEXT_TAG=v${{ steps.semantic.outputs.nextRelease.version }}" >> $GITHUB_OUTPUT
-         #echo "RELEASE_TYPE=${{ steps.semantic.outputs.nextRelease.type }}" >> $GITHUB_OUTPUT
+          echo "PREV_TAG=v${{ steps.semantic.outputs.lastRelease.version }}" >> $GITHUB_OUTPUT
+          echo "NEXT_TAG=v${{ steps.semantic.outputs.nextRelease.version }}" >> $GITHUB_OUTPUT
+          echo "RELEASE_TYPE=${{ steps.semantic.outputs.nextRelease.type }}" >> $GITHUB_OUTPUT
