@@ -12,7 +12,8 @@ on:
       release_type:
         description: "Type of release"
         value: ${{ jobs.release.outputs.release_type }}
-
+permissions:
+  contents: write
 jobs:
   release:
     runs-on: ubuntu-latest
