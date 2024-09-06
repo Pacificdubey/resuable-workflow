@@ -31,6 +31,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+          
+      - name: Fetch all history and tags
+        run: git fetch --prune --unshallow || git fetch --prune
+
+      - name: Ensure branch is up-to-date
+        run: git reset --hard origin/${{ github.ref_name }}
+        
 
       - name: Semantic Release
         id: semantic
