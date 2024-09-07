@@ -39,6 +39,7 @@ jobs:
             @semantic-release/git@10.0.1 \
             @semantic-release/release-notes-generator@12.1.0 \
             @semantic-release/changelog@6.0.3
+            npx semantic-release  || true
 
       - name: Run Semantic Release
         id: semantic_release
@@ -46,8 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Run semantic release and capture the output
-          npx semantic-release  .releaserc.mjs || true
-
           # Capture the last release tag and next release tag using git
           LAST_TAG=$(git describe --tags --abbrev=0)
           echo "LAST_TAG=$LAST_TAG"
