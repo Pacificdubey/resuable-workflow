@@ -46,7 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Run semantic release and capture the output
-          npx semantic-release || true
+          npx semantic-release  .releaserc.mjs || true
 
           # Capture the last release tag and next release tag using git
           LAST_TAG=$(git describe --tags --abbrev=0)
