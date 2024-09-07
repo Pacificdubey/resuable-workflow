@@ -54,8 +54,14 @@ jobs:
       - name: Set Output Variables
         id: set-output
         run: |
+          # Fallback logic inside the script
           PREV_TAG=${{ steps.semantic.outputs.lastRelease.version || '0.0.0' }}
-          NEXT_TAG=${{ steps.semantic.outputs.nextRelease.version || ${{ steps.semantic.outputs.lastRelease.version || '0.0.0' }} }}
+          NEXT_TAG=${{ steps.semantic.outputs.nextRelease.version }}
+          
+          if [ -z "$NEXT_TAG" ]; then
+            NEXT_TAG=$PREV_TAG
+          fi
+          
           RELEASE_TYPE=${{ steps.semantic.outputs.nextRelease.type || 'patch' }}
           
           echo "PREV_TAG=v$PREV_TAG" >> $GITHUB_ENV
