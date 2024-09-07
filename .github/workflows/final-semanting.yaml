@@ -64,10 +64,12 @@ jobs:
           
           RELEASE_TYPE=${{ steps.semantic.outputs.nextRelease.type || 'patch' }}
           
+          # Write to environment files for the rest of the workflow
           echo "PREV_TAG=v$PREV_TAG" >> $GITHUB_ENV
           echo "NEXT_TAG=v$NEXT_TAG" >> $GITHUB_ENV
           echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_ENV
           
-          echo "::set-output name=PREV_TAG::v$PREV_TAG"
-          echo "::set-output name=NEXT_TAG::v$NEXT_TAG"
-          echo "::set-output name=RELEASE_TYPE::$RELEASE_TYPE"
+          # Use the new environment files method for outputs
+          echo "PREV_TAG=v$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "NEXT_TAG=v$NEXT_TAG" >> $GITHUB_OUTPUT
+          echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_OUTPUT
