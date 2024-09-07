@@ -20,9 +20,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      previous_tag: ${{ steps.semantic.outputs.PREV_TAG }}
-      next_tag: ${{ steps.semantic.outputs.NEXT_TAG }}
-      release_type: ${{ steps.semantic.outputs.RELEASE_TYPE }}
+      previous_tag: ${{ steps.set-output.outputs.PREV_TAG }}
+      next_tag: ${{ steps.set-output.outputs.NEXT_TAG }}
+      release_type: ${{ steps.set-output.outputs.RELEASE_TYPE }}
 
     steps:
       - name: Checkout code
@@ -52,11 +52,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Output Variables
+        id: set-output
         run: |
           PREV_TAG=${{ steps.semantic.outputs.lastRelease.version || '0.0.0' }}
-          NEXT_TAG=${{ steps.semantic.outputs.nextRelease.version || $PREV_TAG }}
+          NEXT_TAG=${{ steps.semantic.outputs.nextRelease.version || ${{ steps.semantic.outputs.lastRelease.version || '0.0.0' }} }}
           RELEASE_TYPE=${{ steps.semantic.outputs.nextRelease.type || 'patch' }}
           
           echo "PREV_TAG=v$PREV_TAG" >> $GITHUB_ENV
           echo "NEXT_TAG=v$NEXT_TAG" >> $GITHUB_ENV
           echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_ENV
+          
+          echo "::set-output name=PREV_TAG::v$PREV_TAG"
+          echo "::set-output name=NEXT_TAG::v$NEXT_TAG"
+          echo "::set-output name=RELEASE_TYPE::$RELEASE_TYPE"
