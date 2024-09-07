@@ -32,6 +32,8 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         run: |
           npm install --no-save \
             semantic-release@22.0.12 \
