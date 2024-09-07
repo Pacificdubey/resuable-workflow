@@ -4,15 +4,12 @@ name: Reusable Semantic Release Workflow
 on:
   workflow_call:
     outputs:
-      previous_tag:
-        description: "Previous version tag"
-        value: ${{ jobs.release.outputs.previous_tag }}
       next_tag:
         description: "Next version tag"
         value: ${{ jobs.release.outputs.next_tag }}
-      release_type:
-        description: "Type of release"
-        value: ${{ jobs.release.outputs.release_type }}
+      #release_type:
+       # description: "Type of release"
+        #value: ${{ jobs.release.outputs.release_type }}
 permissions:
   contents: write
 
@@ -20,9 +17,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      previous_tag: ${{ steps.set-output.outputs.PREV_TAG }}
-      next_tag: ${{ steps.set-output.outputs.NEXT_TAG }}
-      release_type: ${{ steps.set-output.outputs.RELEASE_TYPE }}
+      next_tag: ${{ steps.semantic_releaset.outputs.NEXT_TAG }}
+     # release_type: ${{ steps.semantic_release.outputs.RELEASE_TYPE }}
 
     steps:
       - name: Checkout code
@@ -44,37 +40,30 @@ jobs:
             @semantic-release/release-notes-generator@12.1.0 \
             @semantic-release/changelog@6.0.3
 
-      - name: Semantic Release
-        id: semantic
+      - name: Run Semantic Release
+        id: semantic_release
         run: |
-          node .releaserc.mjs
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Run semantic release and capture the output
+          npx semantic-release || true
 
-      - name: Set Output Variables
-        id: set-output
-        run: |
-          # Fallback logic inside the script
-          PREV_TAG=${{ steps.semantic.outputs.lastRelease.version || '0.0.0' }}
-          NEXT_TAG=${{ steps.semantic.outputs.nextRelease.version }}
-          
-          if [ -z "$NEXT_TAG" ]; then
-            NEXT_TAG=$PREV_TAG
+          # Capture the last release tag and next release tag using git
+          LAST_TAG=$(git describe --tags --abbrev=0)
+          echo "LAST_TAG=$LAST_TAG"
+
+          # If semantic-release generates a new tag, capture it
+          if [ -f ".nextRelease" ]; then
+            NEXT_TAG=$(cat .nextRelease)
+            echo "New release tag: $NEXT_TAG"
+            echo "NEXT_TAG=$NEXT_TAG" >> $GITHUB_ENV
+          else
+            # If no new release is generated, fallback to the last tag
+            echo "No new release, using last tag: $LAST_TAG"
+            echo "NEXT_TAG=$LAST_TAG" >> $GITHUB_ENV
           fi
-          
-          RELEASE_TYPE=${{ steps.semantic.outputs.nextRelease.type || 'patch' }}
 
-          # Write to environment files for the rest of the workflow
-          echo "PREV_TAG=v$PREV_TAG" >> $GITHUB_ENV
-          echo "NEXT_TAG=v$NEXT_TAG" >> $GITHUB_ENV
-          echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_ENV
-          
-          # Use the new environment files method for outputs
-          echo "PREV_TAG=v$PREV_TAG" >> $GITHUB_OUTPUT
-          echo "NEXT_TAG=v$NEXT_TAG" >> $GITHUB_OUTPUT
-          echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+      - name: Use Version
+        run: echo "Version to use:${{ env.NEXT_TAG }}"
 
-
-          echo "DEBUG: PREV_TAG=v$PREV_TAG"
-          echo "DEBUG: NEXT_TAG=v$NEXT_TAG"
-          echo "DEBUG: RELEASE_TYPE=$RELEASE_TYPE"
+      - name: Save Tag to Environment
+        run: |
+          echo "VERSION=${{ env.NEXT_TAG }}" >> $GITHUB_ENV
