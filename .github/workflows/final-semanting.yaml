@@ -6,6 +6,7 @@ on:
       next_tag:
         description: "Next version tag"
         value: ${{ jobs.release.outputs.next_tag }}
+        
 permissions:
   contents: write
   issues: write
@@ -33,7 +34,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Dependencies
+      - name: Run Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -47,12 +48,12 @@ jobs:
             @semantic-release/changelog@6.0.3
             npx semantic-release  || true
 
-      - name: Run Semantic Release
+      - name: Get Version Output
         id: semantic_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Run semantic release and capture the output
+          # capture the output
           # Capture the last release tag and next release tag using git
           LAST_TAG=$(git describe --tags --abbrev=0)
           echo "LAST_TAG=$LAST_TAG"
@@ -61,16 +62,12 @@ jobs:
           if [ -f ".nextRelease" ]; then
             NEXT_TAG=$(cat .nextRelease)
             echo "New release tag: $NEXT_TAG"
-            echo "NEXT_TAG=$NEXT_TAG" >> $GITHUB_ENV
+            echo "NEXT_TAG=$NEXT_TAG" >> $GITHUB_OUTPUT
           else
             # If no new release is generated, fallback to the last tag
             echo "No new release, using last tag: $LAST_TAG"
-            echo "NEXT_TAG=$LAST_TAG" >> $GITHUB_ENV
+            echo "NEXT_TAG=$LAST_TAG" >> $GITHUB_OUTPUT
           fi
 
       - name: Use Version
         run: echo "Version to use:${{ env.NEXT_TAG }}"
-
-      - name: Save Tag to Environment
-        run: |
-          echo "VERSION=${{ env.NEXT_TAG }}" >> $GITHUB_ENV
