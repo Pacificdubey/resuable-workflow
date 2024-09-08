@@ -27,8 +27,6 @@ jobs:
           path: config/release.config.js
           
       - run : |
-            cd config
-            ls -la 
             mv config/release.config.js .
 
       - name: Checkout code (the main repository where the release will happen)
