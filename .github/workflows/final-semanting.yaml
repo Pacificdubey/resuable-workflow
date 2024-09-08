@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Pacificdubey/resuable-workflow     # Replace with your reusable workflow repository
-          path: reusable-config
+          path: config
           
       - run : |
              ls -la 
@@ -32,6 +32,8 @@ jobs:
 
       - name: Checkout code (the main repository where the release will happen)
         uses: actions/checkout@v4
+        with:
+          path: main-repo
 
       - run : |
             ls -la
