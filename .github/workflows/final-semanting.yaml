@@ -33,10 +33,12 @@ jobs:
       - name: Checkout code (the main repository where the release will happen)
         uses: actions/checkout@v4
         with:
-          path: main-repo
+          path: ${{ github.repository }}
 
       - run : |
-            ls -la
+            #ls -la
+            ls -la ${{ github.repository }}/
+            ls -la config/
            
 
         
