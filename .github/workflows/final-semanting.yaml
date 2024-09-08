@@ -33,6 +33,9 @@ jobs:
       - name: Checkout code (the main repository where the release will happen)
         uses: actions/checkout@v4
 
+      - run : |
+            ls -la 
+
         
       - name: Fetch all history and tags
         run: git fetch --prune --unshallow || git fetch --prune
