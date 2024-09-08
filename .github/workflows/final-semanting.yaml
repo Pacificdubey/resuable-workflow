@@ -20,23 +20,36 @@ jobs:
       next_tag: ${{ steps.semantic_release.outputs.NEXT_TAG }}
 
     steps:
-
       - name: Checkout code (the main repository where the release will happen)
         uses: actions/checkout@v4
 
+      # Step 2: Check if any release config file exists in the main repo
+      - name: Check for existing release config
+        id: check_config
+        run: |
+          # Check for various extensions of release config files
+          if [ -f "release.config.js" ] || [ -f ".releaserc.mjs" ] || [ -f ".releaserc.json" ] || [ -f ".releaserc.yml" ]; then
+            echo "Config file exists, skipping copy."
+            echo "COPY_REQUIRED=false" >> $GITHUB_ENV
+          else
+            echo "No config file found, copying from reusable workflow."
+            echo "COPY_REQUIRED=true" >> $GITHUB_ENV
+          fi
+
       - name: Checkout reusable workflow repository (to get release config)
+        if: env.COPY_REQUIRED == 'true'
         uses: actions/checkout@v4
         with:
-          repository: Pacificdubey/resuable-workflow     # Replace with your reusable workflow repository
+          repository: Pacificdubey/resuable-workflow  
           path: config
+          fetch-depth: 1
           
-      - run : |
-            #ls -la
+      - name: Copy release config file from reusable workflow
+        if: env.COPY_REQUIRED == 'true'
+        run : |
             mv config/config/release.config.js  ./
             ls -la 
-           
-
-        
+                 
       - name: Fetch all history and tags
         run: git fetch --prune --unshallow || git fetch --prune
         
