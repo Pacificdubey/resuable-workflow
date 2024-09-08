@@ -34,7 +34,6 @@ jobs:
         uses: actions/checkout@v4
 
       - run : |
-           cd /home/runner/work/Github-Action-JFrog/Github-Action-JFrog
             ls -la
            
 
