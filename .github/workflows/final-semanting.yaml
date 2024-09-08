@@ -53,10 +53,17 @@ jobs:
             ls -la 
                  
       - name: Fetch all history and tags
-        run: git fetch --tags --prune --unshallow || git fetch --tags --prune
-        
+        run: |
+            if git rev-parse --is-shallow-repository; then
+                 git fetch --prune --unshallow --tags
+            else
+                 git fetch --prune --tags
+             fi  
       - name: Ensure branch is up-to-date
         run: git reset --hard origin/${{ github.ref_name }}
+        
+      - name: List fetched tags
+        run: git tag -l
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
