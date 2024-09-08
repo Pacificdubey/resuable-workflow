@@ -53,7 +53,7 @@ jobs:
             ls -la 
                  
       - name: Fetch all history and tags
-        run: git fetch --prune --unshallow || git fetch --prune
+        run: git fetch --tags --prune --unshallow || git fetch --tags --prune
         
       - name: Ensure branch is up-to-date
         run: git reset --hard origin/${{ github.ref_name }}
