@@ -20,21 +20,20 @@ jobs:
       next_tag: ${{ steps.semantic_release.outputs.NEXT_TAG }}
 
     steps:
+
+      - name: Checkout code (the main repository where the release will happen)
+        uses: actions/checkout@v4
+
       - name: Checkout reusable workflow repository (to get release config)
         uses: actions/checkout@v4
         with:
           repository: Pacificdubey/resuable-workflow     # Replace with your reusable workflow repository
           path: config
-
-      - name: Checkout code (the main repository where the release will happen)
-        uses: actions/checkout@v4
-        with:
-          path: ${{ github.repository }}
-
+          
       - run : |
             #ls -la
-            mv config/config/release.config.js ${{ github.repository }}/
-            ls -la ${{ github.repository }}/
+            mv config/config/release.config.js  ./
+            ls -la 
            
 
         
