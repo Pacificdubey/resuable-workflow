@@ -54,11 +54,11 @@ jobs:
                  
       - name: Fetch all history and tags
         run: |
-            if git rev-parse --is-shallow-repository; then
-                 git fetch --prune --unshallow --tags
-            else
-                 git fetch --prune --tags
-             fi  
+               if [ -f "$(git rev-parse --git-dir)/shallow" ]; then
+                     git fetch --prune --unshallow --tags
+               else
+                      git fetch --prune --tags
+                fi
       - name: Ensure branch is up-to-date
         run: git reset --hard origin/${{ github.ref_name }}
         
