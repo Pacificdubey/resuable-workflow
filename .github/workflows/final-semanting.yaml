@@ -20,8 +20,15 @@ jobs:
       next_tag: ${{ steps.semantic_release.outputs.NEXT_TAG }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout reusable workflow repository (to get release config)
         uses: actions/checkout@v4
+        with:
+          repository: Pacificdubey/reusable-workflow  # Replace with your reusable workflow repository
+          path: config
+
+      - name: Checkout code (the main repository where the release will happen)
+        uses: actions/checkout@v4
+
         
       - name: Fetch all history and tags
         run: git fetch --prune --unshallow || git fetch --prune
